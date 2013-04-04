@@ -1,0 +1,106 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script
+        type = "text/javascript"
+        src = "http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0">
+</script>
+</head>
+<body>
+        <div style = "width:800px; height:50px;">
+            <span id = "lbl"> </span>
+        </div>
+        <div id = "map" style = "width:800px; height:600px;">
+        </div>
+<script type = "text/javascript">
+    var restrooms = [
+            { lat: 37.810079, long: -122.410806 },
+            { lat: 37.809079, long: -122.410206 },
+            { lat: 37.811279, long: -122.410446 }
+        ];
+        var map = null;
+        var lbl = document.getElementById("lbl");
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                showLocation,
+                errorHandler,
+                {
+                maximumAge: 100,
+                timeout: 6000,
+                enableHighAccuracy: false
+                });
+            }
+        else {
+            alert("Geolocation not suported");
+        }
+        function showLocation(pos) {
+            lbl.innerHTML =
+            "Your latitude: " + pos.coords.latitude +
+            " and longitude: " + pos.coords.longitude +
+            " (Accuracy of: " + pos.coords.accuracy + " meters)";
+            // Save the current location
+            var lat = pos.coords.latitude;
+            var long = pos.coords.longitude;
+             lat = 37.811079;
+            long = -122.410546;
+            // Create the map
+            map = new Microsoft.Maps.Map(document.getElementById("map"),
+            {
+                credentials:
+                "Annuy8UjFc4JdpuAAuJHRReDuJ5FCDvywDZDSxcY7UZnbGyUX2w0TJ1x0VDqbRYs"
+            });
+            // Center it on the current location
+            map.setView({ zoom: 18, center: new Microsoft.Maps.Location(lat, long) });
+            // Mark the current location
+            var pushpin = new Microsoft.Maps.Pushpin(
+                                            new Microsoft.Maps.Location(lat, long), null);
+            map.entities.push(pushpin);
+            markRestrooms();
+        }
+        function errorHandler(e) {
+            switch (error.code) {
+                case 0:
+                    updateStatus("There was an error while retrieving your location: " +
+                                    error.message);
+                    break;
+                case 1:
+                    updateStatus("The user prevented this page from retrieving a location.");
+                    break;
+                case 2:
+                    updateStatus("The browser was unable to determine your location: " +
+            error.message);
+                    break;
+                case 3:
+                    updateStatus("The browser timed out before retrieving the location.");
+                    break;
+            }
+         /*   if (e.code === 1) { // PERMISSION_DENIED
+                lbl.innerHTML = "Permission denied. - " + e.message;
+            } else if (e.code === 2) { //POSITION_UNAVAILABLE
+                lbl.innerHTML = "Make sure your network connection is active and " +
+                "try this again. - " + e.message;
+            } else if (e.code === 3) { //TIMEOUT
+                lbl.innerHTML = "A timeout ocurred; try again. - " + e.message;
+            }*/
+        }
+        function markRestrooms() {
+            for (var markRestrooms_i in restrooms) {
+                markRestroom(restrooms[markRestrooms_i].lat, restrooms[markRestrooms_i].long);
+            }
+        }
+        function markRestroom(lat, long) {
+            var pushpinOptions = {icon: '/Content/restroom.gif', width: 35, height: 35 };
+            var pushpin = new Microsoft.Maps.Pushpin
+                                    (new Microsoft.Maps.Location(lat, long), pushpinOptions);
+        map.entities.push(pushpin);
+        }
+</script>       
+</body>
+</html>
